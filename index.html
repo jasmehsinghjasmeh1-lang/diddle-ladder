@@ -6,36 +6,23 @@
     <title>Diddle Ladder Game</title>
     <style>
         body {
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f4f6f9; margin: 0; padding: 0;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; font-family: system-ui, -apple-system, sans-serif;
         }
         #d-gm-c { 
-            width: 380px; 
-            background: #fff; 
-            border: 3px solid #2b2b2b; 
-            border-radius: 14px; 
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15); 
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-            box-sizing: border-box; 
+            width: 380px; background: #fff; border: 3px solid #2b2b2b; 
+            border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.15); 
+            padding: 20px; display: flex; flex-direction: column; gap: 12px; box-sizing: border-box; 
         } 
         #d-hd { display: flex; justify-content: center; align-items: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; } 
         #d-tl { font-size: 20px; font-weight: 800; color: #1976d2; margin: 0; } 
         #d-df-s { display: flex; flex-direction: column; gap: 10px; align-items: center; padding: 10px 0; } 
-        .df-b { width: 100%; padding: 12px; border: 2px solid #ccc; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; background: #fafafa; transition: transform 0.1s; } 
-        .df-b:hover { transform: scale(1.02); }
+        .df-b { width: 100%; padding: 12px; border: 2px solid #ccc; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; background: #fafafa; } 
         .df-b[data-diff="EASY"] { border-color: #4caf50; color: #2e7d32; } 
         .df-b[data-diff="MEDIUM"] { border-color: #ff9800; color: #ef6c00; } 
         .df-b[data-diff="HARD"] { border-color: #f44336; color: #c62828; } 
-        .df-b[data-diff="EXTREME"] { border-color: #9c27b0; color: #6a1b9a; background: #faf5ff; } 
+        .df-b[data-diff="EXTREME"] { border-color: #9c27b0; color: #6a1b9a; } 
         #d-gm-l { display: none; flex-direction: column; gap: 12px; } 
         .d-tg-b { background: #e3f2fd; border: 1.5px dashed #1976d2; border-radius: 6px; padding: 8px; text-align: center; font-size: 14px; font-weight: bold; color: #0d47a1; } 
         #d-hi-s { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 4px; border: 1px solid #f5f5f5; border-radius: 6px; } 
@@ -45,10 +32,9 @@
         .d-tl-b.sc-t { background: #e8f5e9; border-color: #81c784; color: #2e7d32; } 
         .d-ct { display: flex; gap: 6px; } 
         #d-in { flex: 1; padding: 10px; border: 2px solid #ccc; border-radius: 8px; text-transform: uppercase; font-size: 15px; font-weight: bold; text-align: center; letter-spacing: 2px; } 
-        .d-b-m { background: #1976d2; color: white; border: none; border-radius: 8px; padding: 0 16px; font-weight: bold; cursor: pointer; font-size: 14px; } 
+        .d-b-m { background: #1976d2; color: white; border: none; border-radius: 8px; padding: 0 16px; font-weight: bold; cursor: pointer; } 
         #d-ms { font-size: 13px; font-weight: bold; text-align: center; min-height: 18px; color: #666; } 
-        .d-ut-r { display: flex; gap: 6px; } 
-        .d-b-s { background: #f5f5f5; border: 1px solid #ccc; border-radius: 6px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer; color: #555; flex: 1; text-align: center; } 
+        .d-b-s { background: #f5f5f5; border: 1px solid #ccc; border-radius: 6px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer; color: #555; text-align: center; width: 100%; } 
         #d-kb { display: flex; flex-direction: column; gap: 4px; } 
         .kb-r { display: flex; justify-content: center; gap: 4px; } 
         .kb-k { flex: 1; max-width: 32px; height: 34px; background: #e0e0e0; border: none; border-radius: 4px; font-size: 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; } 
@@ -58,18 +44,13 @@
 <body>
 
 <div id="d-gm-c"> 
-  <div id="d-hd"> 
-    <h1 id="d-tl">🪜 DIDDLE LADDER</h1> 
-  </div> 
+  <div id="d-hd"><h1 id="d-tl">🪜 DIDDLE LADDER</h1></div> 
   <div id="d-df-s"> 
-    <div id="d-loading-msg" style="font-weight: bold; color: #e65100; margin-bottom: 10px;">📥 Loading dictionary...</div>
-    <div id="d-diff-options" style="display: none; flex-direction: column; gap: 10px; align-items: center; width: 100%;">
-        <div style="font-weight: bold; margin-bottom: 5px;">Select starting difficulty:</div> 
-        <button class="df-b" data-diff="EASY">EASY</button>
-        <button class="df-b" data-diff="MEDIUM">MEDIUM</button>
-        <button class="df-b" data-diff="HARD">HARD</button>
-        <button class="df-b" data-diff="EXTREME">EXTREME</button>
-    </div>
+    <div style="font-weight: bold; margin-bottom: 5px;">Select starting difficulty:</div> 
+    <button class="df-b" data-diff="EASY">EASY</button>
+    <button class="df-b" data-diff="MEDIUM">MEDIUM</button>
+    <button class="df-b" data-diff="HARD">HARD</button>
+    <button class="df-b" data-diff="EXTREME">EXTREME</button>
   </div> 
   <div id="d-gm-l"> 
     <div class="d-tg-b"></div> 
@@ -79,12 +60,11 @@
       <button class="d-b-m" id="d-step-btn">STEP</button> 
     </div> 
     <div id="d-ms"></div> 
-    <div class="d-ut-r"> 
-      <button class="d-b-s" id="d-menu-btn">⬅️ Main Menu</button> 
-    </div> 
+    <div class="d-ut-r"><button class="d-b-s" id="d-menu-btn">⬅️ Main Menu</button></div> 
     <div id="d-kb"></div> 
   </div> 
 </div>
+
 <script>
   const TARGET = "DIDDLE", POOLS = { 
     EASY: ["FIDDLE", "PUDDLE", "RIDDLE", "SADDLE", "MUDDLE"], 
@@ -92,37 +72,11 @@
     HARD: ["BITTER", "POCKET", "PACKED", "PICKLE", "POPPED"], 
     EXTREME: ["FROZEN", "MONKEY", "ROCKET", "KITTEN", "COFFEE"] 
   }; 
-  
-  let LOCAL_DICT = new Set(["DIDDLE"]);
-
-  // This downloads thousands of 6-letter English words automatically (including all 'P' words)
-  fetch('https://githubusercontent.com')
-    .then(response => response.text())
-    .then(text => {
-      text.split('\n').forEach(word => {
-        let cleanWord = word.trim().toUpperCase();
-        if (cleanWord.length === 6) { LOCAL_DICT.add(cleanWord); }
-      });
-      Object.values(POOLS).flat().forEach(w => LOCAL_DICT.add(w));
-      document.getElementById('d-loading-msg').style.display = 'none';
-      document.getElementById('d-diff-options').style.display = 'flex';
-    })
-    .catch(err => {
-      document.getElementById('d-loading-msg').textContent = "⚠️ Playing offline mode.";
-      document.getElementById('d-diff-options').style.display = 'flex';
-    });
 
   let sWord = "", path = [], used = new Set();
-  const tl = document.getElementById('d-tl');
-  const dfS = document.getElementById('d-df-s');
-  const gLy = document.getElementById('d-gm-l');
-  const tgB = document.querySelector('.d-tg-b');
-  const scC = document.getElementById('d-hi-s');
-  const inp = document.getElementById('d-in');
-  const btn = document.getElementById('d-step-btn');
-  const msg = document.getElementById('d-ms');
-  const bMn = document.getElementById('d-menu-btn');
-  const kbC = document.getElementById('d-kb');
+  const tl = document.getElementById('d-tl'), dfS = document.getElementById('d-df-s'), gLy = document.getElementById('d-gm-l');
+  const tgB = document.querySelector('.d-tg-b'), scC = document.getElementById('d-hi-s'), inp = document.getElementById('d-in');
+  const btn = document.getElementById('d-step-btn'), msg = document.getElementById('d-ms'), bMn = document.getElementById('d-menu-btn'), kbC = document.getElementById('d-kb');
 
   document.querySelectorAll('.df-b').forEach(b => {
     b.addEventListener('click', () => sWithD(b.getAttribute('data-diff')));
@@ -173,7 +127,6 @@
     let guess = inp.value.toUpperCase().trim();
     let currentWord = path[path.length - 1];
     if (guess.length !== 6) { msg.textContent = "Word must be 6 letters long!"; return; }
-    if (!LOCAL_DICT.has(guess)) { msg.textContent = "Not in word list!"; return; }
     if (used.has(guess)) { msg.textContent = "Already used that word!"; return; }
     let diff = 0;
     for (let i = 0; i < 6; i++) { if (guess[i] !== currentWord[i]) diff++; }
