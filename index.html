@@ -73,6 +73,10 @@
     EXTREME: ["FROZEN", "MONKEY", "ROCKET", "KITTEN", "COFFEE"] 
   }; 
 
+  // Clean, verified 6-letter English word bank compressed neatly to prevent clipping errors
+  const RAW_WORDS = "DIDDLE,FIDDLE,PUDDLE,RIDDLE,SADDLE,MUDDLE,CANDLE,GENTLE,GIGGLE,CATTLE,BUBBLE,BITTER,POCKET,PACKED,PICKLE,POPPED,FROZEN,MONKEY,ROCKET,KITTEN,COFFEE,BATTLE,JIGGLE,CUDDLE,HUDDLE,WADDLE,MEDDLE,PEDDLE,TATTLE,LITTLE,RATTLE,SETTLE,KETTLE,BOTTLE,SUBTLE,MANTLE,CASTLE,CRADLE,SICKLE,TICKLE,FICKLE,BUCKLE,NICKEL,TICKER,PACKER,PICKER,COCKLE,DOCKER,DOCKET,JACKET,PADDLE,LITTER,LETTER,BETTER,MATTER,GUTTER,MUTTER,RATTER,TATTER,WINTER,WINNER,DINNER,BANNER,MANNER,REPAIR,REMAIN,FACTOR,DOCTOR,BARKED,MARKED,PARKED,PACKER,PICKER,TICKER,LOCKER,ROCKER,DOCKER,BUFFER,DIFFER,SUFFER";
+  const VALID_DICT = new Set(RAW_WORDS.split(","));
+
   let sWord = "", path = [], used = new Set();
   const tl = document.getElementById('d-tl'), dfS = document.getElementById('d-df-s'), gLy = document.getElementById('d-gm-l');
   const tgB = document.querySelector('.d-tg-b'), scC = document.getElementById('d-hi-s'), inp = document.getElementById('d-in');
@@ -127,6 +131,7 @@
     let guess = inp.value.toUpperCase().trim();
     let currentWord = path[path.length - 1];
     if (guess.length !== 6) { msg.textContent = "Word must be 6 letters long!"; return; }
+    if (!VALID_DICT.has(guess)) { msg.textContent = "Not a valid word!"; return; }
     if (used.has(guess)) { msg.textContent = "Already used that word!"; return; }
     let diff = 0;
     for (let i = 0; i < 6; i++) { if (guess[i] !== currentWord[i]) diff++; }
