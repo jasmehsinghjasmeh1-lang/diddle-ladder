@@ -46,14 +46,11 @@
 <div id="d-gm-c"> 
   <div id="d-hd"><h1 id="d-tl">🪜 DIDDLE LADDER</h1></div> 
   <div id="d-df-s"> 
-    <div id="d-load-status" style="font-weight: bold; color: #e65100; margin-bottom: 10px;">📥 Setting up strict dictionary...</div>
-    <div id="d-diff-options" style="display: none; flex-direction: column; gap: 10px; align-items: center; width: 100%;">
-        <div style="font-weight: bold; margin-bottom: 5px;">Select starting difficulty:</div> 
-        <button class="df-b" data-diff="EASY">EASY</button>
-        <button class="df-b" data-diff="MEDIUM">MEDIUM</button>
-        <button class="df-b" data-diff="HARD">HARD</button>
-        <button class="df-b" data-diff="EXTREME">EXTREME</button>
-    </div>
+    <div style="font-weight: bold; margin-bottom: 5px;">Select starting difficulty:</div> 
+    <button class="df-b" data-diff="EASY">EASY</button>
+    <button class="df-b" data-diff="MEDIUM">MEDIUM</button>
+    <button class="df-b" data-diff="HARD">HARD</button>
+    <button class="df-b" data-diff="EXTREME">EXTREME</button>
   </div> 
   <div id="d-gm-l"> 
     <div class="d-tg-b"></div> 
@@ -76,21 +73,9 @@
     EXTREME: ["FROZEN", "MONKEY", "ROCKET", "KITTEN", "COFFEE"] 
   }; 
 
-  let REAL_DICTIONARY = new Set(["DIDDLE", "LITTER", "PADDLE", "LOCKET", "DOCKET", "POCKET"]);
-
-  // Connects securely using direct raw delivery nodes to avoid security issues
-  fetch('https://githubusercontent.com')
-    .then(res => res.json())
-    .then(wordArray => {
-      wordArray.forEach(w => { if (w.length === 6) REAL_DICTIONARY.add(w.toUpperCase().trim()); });
-      Object.values(POOLS).flat().forEach(w => REAL_DICTIONARY.add(w));
-      document.getElementById('d-load-status').style.display = 'none';
-      document.getElementById('d-diff-options').style.display = 'flex';
-    })
-    .catch(() => {
-      document.getElementById('d-load-status').innerHTML = "⚠️ Offline mode active. Using local fallback list.";
-      document.getElementById('d-diff-options').style.display = 'flex';
-    });
+  // Completely robust local bank containing only valid dictionary combinations
+  const DICTIONARY_RAW = "DIDDLE,FIDDLE,PUDDLE,RIDDLE,SADDLE,MUDDLE,CANDLE,GENTLE,GIGGLE,CATTLE,BUBBLE,BITTER,POCKET,PACKED,PICKLE,POPPED,FROZEN,MONKEY,ROCKET,KITTEN,COFFEE,BATTLE,JIGGLE,CUDDLE,HUDDLE,WADDLE,MEDDLE,PEDDLE,TATTLE,LITTLE,RATTLE,SETTLE,KETTLE,BOTTLE,SUBTLE,MANTLE,CASTLE,CRADLE,SICKLE,TICKLE,FICKLE,BUCKLE,NICKEL,TICKER,PACKER,PICKER,COCKLE,DOCKER,DOCKET,JACKET,PADDLE,LITTER,LOCKET,DOCKET,POCKET,LETTER,BETTER,MATTER,GUTTER,MUTTER,RATTER,TATTER,WINTER,WINNER,DINNER,BANNER,MANNER,REPAIR,REMAIN,FACTOR,DOCTOR,BARKED,MARKED,PARKED,LOCKER,ROCKER,BUFFER,DIFFER,SUFFER,GATHER,RATHER,FATHER,MOTHER,BROOMY,BLOOMY,GLOOMY,CHURCH,CHIRP,CHOOSE,CHEESE";
+  const REAL_DICTIONARY = new Set(DICTIONARY_RAW.split(","));
 
   let sWord = "", path = [], used = new Set();
   const tl = document.getElementById('d-tl'), dfS = document.getElementById('d-df-s'), gLy = document.getElementById('d-gm-l');
