@@ -1,0 +1,173 @@
+Index.html 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diddle Ladder Game</title>
+    <style>
+        body {
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        #d-gm-c { 
+            width: 380px; 
+            background: #fff; 
+            border: 3px solid #2b2b2b; 
+            border-radius: 14px; 
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15); 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            box-sizing: border-box; 
+        } 
+        #d-hd { display: flex; justify-content: center; align-items: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; } 
+        #d-tl { font-size: 20px; font-weight: 800; color: #1976d2; margin: 0; } 
+        #d-df-s { display: flex; flex-direction: column; gap: 10px; align-items: center; padding: 10px 0; } 
+        .df-b { width: 100%; padding: 12px; border: 2px solid #ccc; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; background: #fafafa; transition: transform 0.1s; } 
+        .df-b:hover { transform: scale(1.02); }
+        .df-b[data-diff="EASY"] { border-color: #4caf50; color: #2e7d32; } 
+        .df-b[data-diff="MEDIUM"] { border-color: #ff9800; color: #ef6c00; } 
+        .df-b[data-diff="HARD"] { border-color: #f44336; color: #c62828; } 
+        .df-b[data-diff="EXTREME"] { border-color: #9c27b0; color: #6a1b9a; background: #faf5ff; } 
+        #d-gm-l { display: none; flex-direction: column; gap: 12px; } 
+        .d-tg-b { background: #e3f2fd; border: 1.5px dashed #1976d2; border-radius: 6px; padding: 8px; text-align: center; font-size: 14px; font-weight: bold; color: #0d47a1; } 
+        #d-hi-s { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 4px; border: 1px solid #f5f5f5; border-radius: 6px; } 
+        .d-ld-r { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; } 
+        .d-tl-b { aspect-ratio: 1; border: 2px solid #ddd; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: bold; text-transform: uppercase; border-radius: 6px; background: #fafafa; } 
+        .d-tl-b.st-t { background: #efebe9; border-color: #bcaaa4; color: #5d4037; } 
+        .d-tl-b.sc-t { background: #e8f5e9; border-color: #81c784; color: #2e7d32; } 
+        .d-ct { display: flex; gap: 6px; } 
+        #d-in { flex: 1; padding: 10px; border: 2px solid #ccc; border-radius: 8px; text-transform: uppercase; font-size: 15px; font-weight: bold; text-align: center; letter-spacing: 2px; } 
+        .d-b-m { background: #1976d2; color: white; border: none; border-radius: 8px; padding: 0 16px; font-weight: bold; cursor: pointer; font-size: 14px; } 
+        #d-ms { font-size: 13px; font-weight: bold; text-align: center; min-height: 18px; color: #666; } 
+        .d-ut-r { display: flex; gap: 6px; } 
+        .d-b-s { background: #f5f5f5; border: 1px solid #ccc; border-radius: 6px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer; color: #555; flex: 1; text-align: center; } 
+        #d-kb { display: flex; flex-direction: column; gap: 4px; } 
+        .kb-r { display: flex; justify-content: center; gap: 4px; } 
+        .kb-k { flex: 1; max-width: 32px; height: 34px; background: #e0e0e0; border: none; border-radius: 4px; font-size: 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; } 
+    </style>
+</head>
+<body>
+
+<div id="d-gm-c"> 
+  <div id="d-hd"> 
+    <h1 id="d-tl">🪜 DIDDLE LADDER</h1> 
+  </div> 
+  <div id="d-df-s"> 
+    <div style="font-weight: bold; margin-bottom: 5px;">Select starting difficulty:</div> 
+    <button class="df-b" data-diff="EASY">EASY</button>
+    <button class="df-b" data-diff="MEDIUM">MEDIUM</button>
+    <button class="df-b" data-diff="HARD">HARD</button>
+    <button class="df-b" data-diff="EXTREME">EXTREME</button>
+  </div> 
+  <div id="d-gm-l"> 
+    <div class="d-tg-b"></div> 
+    <div id="d-hi-s"></div> 
+    <div class="d-ct"> 
+      <input type="text" id="d-in" maxlength="6" placeholder="REAL WORD"> 
+      <button class="d-b-m" id="d-step-btn">STEP</button> 
+    </div> 
+    <div id="d-ms"></div> 
+    <div class="d-ut-r"> 
+      <button class="d-b-s" id="d-menu-btn">⬅️ Main Menu</button> 
+    </div> 
+    <div id="d-kb"></div> 
+  </div> 
+</div>
+
+<script>
+  const TARGET = "DIDDLE", POOLS = { 
+    EASY: ["FIDDLE", "PUDDLE", "RIDDLE", "SADDLE", "MUDDLE"], 
+    MEDIUM: ["CANDLE", "GENTLE", "GIGGLE", "CATTLE", "BUBBLE"], 
+    HARD: ["BITTER", "POCKET", "PACKED", "PICKLE", "POPPED"], 
+    EXTREME: ["FROZEN", "MONKEY", "ROCKET", "KITTEN", "COFFEE"] 
+  }; 
+  
+  // Fully loaded native dictionary list to secure the game offline
+  const WORDS = "DIDDLE,FIDDLE,PUDDLE,RIDDLE,SADDLE,MUDDLE,CANDLE,GENTLE,GIGGLE,CATTLE,BUBBLE,BITTER,POCKET,PACKED,PICKLE,POPPED,FROZEN,MONKEY,ROCKET,KITTEN,COFFEE,BATTLE,JIGGLE,CUDDLE,HUDDLE,WADDLE,MEDDLE,PEDDLE,TATTLE,LITTLE,RATTLE,SETTLE,KETTLE,BOTTLE,SUBTLE,MANTLE,CASTLE,CRADLE,SICKLE,TICKLE,FICKLE,BUCKLE,NICKEL,TICKER,PACKER,PICKER,COCKLE,DOCKER,DOCKET,JACKET,CATTLE,KETTLE";
+  const LOCAL_DICT = new Set(WORDS.split(","));
+
+  let sWord = "", path = [], used = new Set();
+  const tl = document.getElementById('d-tl');
+  const dfS = document.getElementById('d-df-s');
+  const gLy = document.getElementById('d-gm-l');
+  const tgB = document.querySelector('.d-tg-b');
+  const scC = document.getElementById('d-hi-s');
+  const inp = document.getElementById('d-in');
+  const btn = document.getElementById('d-step-btn');
+  const msg = document.getElementById('d-ms');
+  const bMn = document.getElementById('d-menu-btn');
+  const kbC = document.getElementById('d-kb');
+
+  document.querySelectorAll('.df-b').forEach(b => {
+    b.addEventListener('click', () => sWithD(b.getAttribute('data-diff')));
+  });
+
+  const rows = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"], kMap = {}; 
+  rows.forEach(rStr => { 
+    const rDiv = document.createElement('div'); rDiv.className = 'kb-r'; 
+    rStr.split('').forEach(l => { 
+      const k = document.createElement('button'); k.className = 'kb-k'; k.textContent = l; kMap[l] = k; 
+      k.addEventListener('click', () => { if(!inp.disabled && inp.value.length < 6) { inp.value += l; inp.dispatchEvent(new Event('input')); } }); 
+      rDiv.appendChild(k); 
+    }); 
+    kbC.appendChild(rDiv); 
+  }); 
+
+  function sWithD(lvl) { 
+    const p = POOLS[lvl]; sWord = p[Math.floor(Math.random() * p.length)]; path = [sWord]; used = new Set(sWord.split('')); 
+    let c = "#1976d2"; if(lvl === "EASY") c = "#4caf50"; if(lvl === "MEDIUM") c = "#ff9800"; if(lvl === "HARD") c = "#f44336"; if(lvl === "EXTREME") c = "#9c27b0"; 
+    tl.textContent = `🪜 DIDDLE LADDER (${lvl})`; tl.style.color = c; btn.style.backgroundColor = c; 
+    inp.disabled = false; btn.disabled = false; inp.value = ""; tgB.style.borderColor = c; tgB.style.color = c; 
+    tgB.textContent = `Transform "sWord"into"{TARGET}"`; msg.textContent = 'Change exactly 1 letter each turn.'; msg.style.color = "#666"; 
+    dfS.style.display = 'none'; gLy.style.display = 'flex'; dLad(c); 
+  } 
+
+  function dLad(thC) { 
+    while (scC.firstChild) scC.removeChild(scC.firstChild); 
+    path.forEach((w, wI) => { 
+      const r = document.createElement('div'); r.className = 'd-ld-r'; const pW = path[wI - 1] || null; 
+      for (let i = 0; i < 6; i++) { 
+        const t = document.createElement('div'); t.className = 'd-tl-b'; t.textContent = w[i]; 
+        if (w === TARGET) t.classList.add('sc-t'); else if (wI === 0) t.classList.add('st-t'); 
+        else if (pW && pW[i] !== w[i]) { t.style.backgroundColor = "#e3f2fd"; t.style.borderColor = thC; t.style.color = thC; } 
+        r.appendChild(t); 
+      } 
+      scC.appendChild(r); 
+    }); 
+    scC.scrollTop = scC.scrollHeight; 
+    Object.keys(kMap).forEach(l => { 
+      if (used.has(l)) { kMap[l].style.backgroundColor = thC; kMap[l].style.color = 'white'; } 
+      else { kMap[l].style.backgroundColor = '#e0e0e0'; kMap[l].style.color = '#333'; } 
+    }); 
+  } 
+
+  function hStep() { 
+    const g = inp.value.trim().toUpperCase(); const cW = path[path.length - 1]; const thC = btn.style.backgroundColor; 
+    if (g.length !== 6) { msg.textContent = "❌ Must be 6 letters!"; msg.style.color = "#d32f2f"; return; } 
+    if (g === cW) { msg.textContent = "❌ Change a letter!"; msg.style.color = "#d32f2f"; return; } 
+    let d = 0; for (let i = 0; i < 6; i++) { if (cW[i] !== g[i]) d++; } 
+    if (d !== 1) { msg.textContent = `❌ Change exactly 1 letter! (Changed ${d})`; msg.style.color = "#d32f2f"; return; } 
+    if (!LOCAL_DICT.has(g)) { 
+      msg.textContent = `❌ "${g}" is not a valid English word!`; msg.style.color = "#d32f2f"; return; 
+    } 
+    path.push(g); g.split('').forEach(l => used.add(l)); inp.value = ""; dLad(thC); 
+    if (g === TARGET) { msg.textContent = `🎉 Won in ${path.length - 1} steps!`; msg.style.color = "#388e3c"; inp.disabled = true; btn.disabled = true; } 
+    else { msg.textContent = `Accepted! Current word: ${g}`; msg.style.color = "#333"; } 
+  } 
+
+  btn.addEventListener('click', hStep); inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') hStep(); }); 
+  bMn.addEventListener('click', () => { gLy.style.display = 'none'; dfS.style.display = 'flex'; tl.textContent = '🪜 DIDDLE LADDER'; tl.style.color = '#1976d2'; }); 
+})();
+</script>
+</body>
+</html>
+
