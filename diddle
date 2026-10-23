@@ -1,4 +1,3 @@
-Index.html 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,6 +52,7 @@ Index.html
         #d-kb { display: flex; flex-direction: column; gap: 4px; } 
         .kb-r { display: flex; justify-content: center; gap: 4px; } 
         .kb-k { flex: 1; max-width: 32px; height: 34px; background: #e0e0e0; border: none; border-radius: 4px; font-size: 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; } 
+        .kb-k.del { max-width: 50px; background: #ef9a9a; }
     </style>
 </head>
 <body>
@@ -91,7 +91,6 @@ Index.html
     EXTREME: ["FROZEN", "MONKEY", "ROCKET", "KITTEN", "COFFEE"] 
   }; 
   
-  // Fully loaded native dictionary list to secure the game offline
   const WORDS = "DIDDLE,FIDDLE,PUDDLE,RIDDLE,SADDLE,MUDDLE,CANDLE,GENTLE,GIGGLE,CATTLE,BUBBLE,BITTER,POCKET,PACKED,PICKLE,POPPED,FROZEN,MONKEY,ROCKET,KITTEN,COFFEE,BATTLE,JIGGLE,CUDDLE,HUDDLE,WADDLE,MEDDLE,PEDDLE,TATTLE,LITTLE,RATTLE,SETTLE,KETTLE,BOTTLE,SUBTLE,MANTLE,CASTLE,CRADLE,SICKLE,TICKLE,FICKLE,BUCKLE,NICKEL,TICKER,PACKER,PICKER,COCKLE,DOCKER,DOCKET,JACKET,CATTLE,KETTLE";
   const LOCAL_DICT = new Set(WORDS.split(","));
 
@@ -111,23 +110,29 @@ Index.html
     b.addEventListener('click', () => sWithD(b.getAttribute('data-diff')));
   });
 
+  // Setup Keyboard
   const rows = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"], kMap = {}; 
-  rows.forEach(rStr => { 
+  rows.forEach((rStr, rIdx) => { 
     const rDiv = document.createElement('div'); rDiv.className = 'kb-r'; 
     rStr.split('').forEach(l => { 
       const k = document.createElement('button'); k.className = 'kb-k'; k.textContent = l; kMap[l] = k; 
-      k.addEventListener('click', () => { if(!inp.disabled && inp.value.length < 6) { inp.value += l; inp.dispatchEvent(new Event('input')); } }); 
+      k.addEventListener('click', () => { if(!inp.disabled && inp.value.length < 6) { inp.value += l; } }); 
       rDiv.appendChild(k); 
     }); 
+    if(rIdx === 2) { // Add backspace button to last row
+      const del = document.createElement('button'); del.className = 'kb-k del'; del.textContent = '⌫';
+      del.addEventListener('click', () => { if(!inp.disabled) inp.value = inp.value.slice(0, -1); });
+      rDiv.appendChild(del);
+    }
     kbC.appendChild(rDiv); 
   }); 
 
   function sWithD(lvl) { 
-    const p = POOLS[lvl]; sWord = p[Math.floor(Math.random() * p.length)]; path = [sWord]; used = new Set(sWord.split('')); 
+    const p = POOLS[lvl]; sWord = p[Math.floor(Math.random() * p.length)]; path = [sWord]; used = new Set([sWord]); 
     let c = "#1976d2"; if(lvl === "EASY") c = "#4caf50"; if(lvl === "MEDIUM") c = "#ff9800"; if(lvl === "HARD") c = "#f44336"; if(lvl === "EXTREME") c = "#9c27b0"; 
     tl.textContent = `🪜 DIDDLE LADDER (${lvl})`; tl.style.color = c; btn.style.backgroundColor = c; 
     inp.disabled = false; btn.disabled = false; inp.value = ""; tgB.style.borderColor = c; tgB.style.color = c; 
-    tgB.textContent = `Transform "sWord"into"{TARGET}"`; msg.textContent = 'Change exactly 1 letter each turn.'; msg.style.color = "#666"; 
+    tgB.textContent = `Transform "${sWord}" into "${TARGET}"`; msg.textContent = 'Change exactly 1 letter each turn.'; msg.style.color = "#666"; 
     dfS.style.display = 'none'; gLy.style.display = 'flex'; dLad(c); 
   } 
 
@@ -144,30 +149,42 @@ Index.html
       scC.appendChild(r); 
     }); 
     scC.scrollTop = scC.scrollHeight; 
-    Object.keys(kMap).forEach(l => { 
-      if (used.has(l)) { kMap[l].style.backgroundColor = thC; kMap[l].style.color = 'white'; } 
-      else { kMap[l].style.backgroundColor = '#e0e0e0'; kMap[l].style.color = '#333'; } 
-    }); 
-  } 
+  }
 
-  function hStep() { 
-    const g = inp.value.trim().toUpperCase(); const cW = path[path.length - 1]; const thC = btn.style.backgroundColor; 
-    if (g.length !== 6) { msg.textContent = "❌ Must be 6 letters!"; msg.style.color = "#d32f2f"; return; } 
-    if (g === cW) { msg.textContent = "❌ Change a letter!"; msg.style.color = "#d32f2f"; return; } 
-    let d = 0; for (let i = 0; i < 6; i++) { if (cW[i] !== g[i]) d++; } 
-    if (d !== 1) { msg.textContent = `❌ Change exactly 1 letter! (Changed ${d})`; msg.style.color = "#d32f2f"; return; } 
-    if (!LOCAL_DICT.has(g)) { 
-      msg.textContent = `❌ "${g}" is not a valid English word!`; msg.style.color = "#d32f2f"; return; 
-    } 
-    path.push(g); g.split('').forEach(l => used.add(l)); inp.value = ""; dLad(thC); 
-    if (g === TARGET) { msg.textContent = `🎉 Won in ${path.length - 1} steps!`; msg.style.color = "#388e3c"; inp.disabled = true; btn.disabled = true; } 
-    else { msg.textContent = `Accepted! Current word: ${g}`; msg.style.color = "#333"; } 
-  } 
+  // Handle Gameplay steps
+  btn.addEventListener('click', () => {
+    let guess = inp.value.toUpperCase().trim();
+    let currentWord = path[path.length - 1];
 
-  btn.addEventListener('click', hStep); inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') hStep(); }); 
-  bMn.addEventListener('click', () => { gLy.style.display = 'none'; dfS.style.display = 'flex'; tl.textContent = '🪜 DIDDLE LADDER'; tl.style.color = '#1976d2'; }); 
-})();
+    if (guess.length !== 6) { msg.textContent = "Word must be 6 letters long!"; return; }
+    if (!LOCAL_DICT.has(guess)) { msg.textContent = "Not in word list!"; return; }
+    if (used.has(guess)) { msg.textContent = "Already used that word!"; return; }
+
+    let diff = 0;
+    for (let i = 0; i < 6; i++) { if (guess[i] !== currentWord[i]) diff++; }
+    if (diff !== 1) { msg.textContent = "Must change exactly 1 letter!"; return; }
+
+    path.push(guess);
+    used.add(guess);
+    inp.value = "";
+    msg.textContent = "Good step!";
+    dLad(btn.style.backgroundColor);
+
+    if (guess === TARGET) {
+      msg.textContent = "🎉 You reached the top! Victory!";
+      msg.style.color = "#4caf50";
+      inp.disabled = true;
+      btn.disabled = true;
+    }
+  });
+
+  bMn.addEventListener('click', () => {
+    dfS.style.display = 'flex';
+    gLy.style.display = 'none';
+    tl.textContent = "🪜 DIDDLE LADDER";
+    tl.style.color = "#1976d2";
+  });
 </script>
+
 </body>
 </html>
-
