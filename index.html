@@ -76,9 +76,9 @@
     EXTREME: ["FROZEN", "MONKEY", "ROCKET", "KITTEN", "COFFEE"] 
   }; 
 
-  let REAL_DICTIONARY = new Set(["DIDDLE", "LITTER", "PADDLE"]);
+  let REAL_DICTIONARY = new Set(["DIDDLE", "LITTER", "PADDLE", "LOCKET", "DOCKET", "POCKET"]);
 
-  // Pulls a verified list of 6-letter words from standard word game dictionary resources
+  // Connects securely using direct raw delivery nodes to avoid security issues
   fetch('https://githubusercontent.com')
     .then(res => res.json())
     .then(wordArray => {
@@ -88,7 +88,7 @@
       document.getElementById('d-diff-options').style.display = 'flex';
     })
     .catch(() => {
-      document.getElementById('d-load-status').textContent = "⚠️ Dictionary loaded locally.";
+      document.getElementById('d-load-status').innerHTML = "⚠️ Offline mode active. Using local fallback list.";
       document.getElementById('d-diff-options').style.display = 'flex';
     });
 
